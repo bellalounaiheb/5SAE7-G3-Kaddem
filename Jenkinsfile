@@ -4,10 +4,6 @@ pipeline {
         jdk 'JAVA_HOME'
         maven 'M2_HOME'
     }
-    environment {
-            // Set the SonarQube token as an environment variable for security
-            SONAR_TOKEN = 'squ_5574cbc60ea6c6c0e9908b0065b9b0d6c0bb43a6' // Use your actual token here
-    }
     stages {
         stage('GIT') {
             steps {
@@ -21,16 +17,16 @@ pipeline {
             }
         }
 
-        stage('SonarQube') {
-            steps {
-                sh 'mvn sonar:sonar -Dsonar.login=admin -Dsonar.password=Sonarqube12345# -Dmaven.test.skip=true'
-            }
-        }
+         stage('SonarQube') {
+             steps {
+                sh 'mvn sonar:sonar -Dsonar.login=admin -Dsonar.password=Admin123456- -Dmaven.test.skip=true'
+           }
+         }
 
         stage('Nexus') {
-           steps {
-              sh 'mvn deploy -Dmaven.test.skip=true'
-           }
+            steps {
+                sh 'mvn deploy -Dmaven.test.skip=true'
+            }
         }
     }
 }
