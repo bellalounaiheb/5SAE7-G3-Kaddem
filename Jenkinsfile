@@ -4,6 +4,10 @@ pipeline {
         jdk 'JAVA_HOME'
         maven 'M2_HOME'
     }
+    environment {
+            // Set the SonarQube token as an environment variable for security
+            SONAR_TOKEN = 'squ_5574cbc60ea6c6c0e9908b0065b9b0d6c0bb43a6' // Use your actual token here
+    }
     stages {
         stage('GIT') {
             steps {
@@ -17,15 +21,9 @@ pipeline {
             }
         }
 
-        stage('MVN SONARQUBE') {
+        stage('SonarQube') {
             steps {
-                echo 'Running SonarQube analysis'
-                script {
-                    def projectKey = '5SAE7-G3-Kaddem'
-                    withSonarQubeEnv('sq1') {
-                        sh "mvn sonar:sonar -Dsonar.projectKey=${projectKey} -DskipTests" // Skipping tests
-                    }
-                }
+                sh 'mvn sonar:sonar -Dsonar.login=admin -Dsonar.password=Sonarqube12345# -Dmaven.test.skip=true'
             }
         }
 
