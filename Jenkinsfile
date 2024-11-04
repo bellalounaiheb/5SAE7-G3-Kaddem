@@ -7,7 +7,7 @@ pipeline {
     stages {
         stage('GIT') {
             steps {
-                git branch: 'master',
+                git branch: 'ZiedGHANEM-5SAE7-G3',
                     url: 'https://github.com/bellalounaiheb/5SAE7-G3-Kaddem.git'
             }
         }
