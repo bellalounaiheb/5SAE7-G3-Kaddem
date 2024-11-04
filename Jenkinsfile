@@ -17,11 +17,17 @@ pipeline {
             }
         }
 
-         stage('SonarQube') {
-             steps {
-                sh 'mvn sonar:sonar -Dsonar.login=admin -Dsonar.password=Sonarqube12345# -Dmaven.test.skip=true'
-           }
-         }
+        stage('MVN SONARQUBE') {
+            steps {
+                echo 'Running SonarQube analysis'
+                script {
+                    def projectKey = '5SAE7-G3-Kaddem'
+                    withSonarQubeEnv('sq1') {
+                        sh "mvn sonar:sonar -Dsonar.projectKey=${projectKey} -DskipTests" // Skipping tests
+                    }
+                }
+            }
+        }
 
         stage('Nexus') {
            steps {
