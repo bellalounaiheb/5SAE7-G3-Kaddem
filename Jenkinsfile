@@ -13,19 +13,19 @@ pipeline {
         }
         stage('Compile Stage') {
             steps {
-                sh 'mvn clean compile'
+                bat 'mvn clean compile'
             }
         }
 
          stage('SonarQube') {
              steps {
-                sh 'mvn sonar:sonar -Dsonar.login=admin -Dsonar.password=Mohamedali_22 -Dmaven.test.skip=true'
+                bat 'mvn sonar:sonar -Dsonar.login=admin -Dsonar.password=Mohamedali_22 -Dmaven.test.skip=true'
            }
          }
 
         stage('Nexus') {
             steps {
-                sh 'mvn deploy -Dmaven.test.skip=true'
+                bat 'mvn deploy -Dmaven.test.skip=true'
             }
         }
     }
