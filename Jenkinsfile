@@ -1,6 +1,9 @@
 pipeline {
     agent any
-
+    environment {
+        // Set the SonarQube token as an environment variable for security
+        SONAR_TOKEN = 'squ_5574cbc60ea6c6c0e9908b0065b9b0d6c0bb43a6' // Use your actual token here
+    }
     stages {
         stage('GIT') {
             steps {
