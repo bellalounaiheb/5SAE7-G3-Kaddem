@@ -56,59 +56,10 @@ pipeline {
             }
         }
 
-      stage('Nexus Deploy ') {
-                 steps {
-                     nexusArtifactUploader artifacts: [
-                         [
-                             artifactId: 'kaddem',
-                             classifier: '',
-                             file: 'target/kaddem.jar',
-                             type: 'jar'
-                         ]
-                     ],
-                      credentialsId: 'nexus3',
-                      groupId: 'tn.esprit.spring',
-                      nexusUrl: 'localhost:8081',
-                      nexusVersion: 'nexus3',
-                      protocol: 'http',
-                      repository: 'kaddem',
-                      version: '0.0.1-SNAPSHOT'
-                 }
-             }
-        stage('Email Notification') {
-            steps {
-                script {
-                    currentBuild.result = 'SUCCESS'
-                    emailext(
-                        subject: "Build #${currentBuild.number} Successful: ${currentBuild.fullDisplayName}",
-                        body: """
-                            The build was successful!
-                            Build Details: ${BUILD_URL}
-                            Build Number: ${currentBuild.number}
-                            Build Status: ${currentBuild.currentResult}
-                        """,
-                        to: 'malek.khelil@esprit.tn'
-                    )
-                }
-            }
-        }
-    }
+      stage('Nexus') {
+                  steps {
+                      sh 'mvn deploy -Dmaven.test.skip=true'
+                  }
+              }
 
-    post {
-        success {
-            emailext (
-                subject: "Build Successful",
-                body: "The build was successful. Job: ${env.JOB_NAME} - Build #${env.BUILD_NUMBER}",
-                to: "malek.khelil@esprit.tn"
-            )
-        }
-        failure {
-            emailext (
-                subject: "Build Failed",
-                body: "The build failed. Job: ${env.JOB_NAME} - Build #${env.BUILD_NUMBER}\n\nConsole Output:\n${currentBuild.rawBuild.getLog(100)}",
-                to: "malek.khelil@esprit.tn",
-                attachLog: true
-            )
-        }
-    }
 }
