@@ -61,22 +61,39 @@ pipeline {
         }
     }
 
-    post {
-        always {
-            script {
-                currentBuild.result = currentBuild.currentResult
+       stage('Email Notification') {
+            steps {
+                script {
+                    currentBuild.result = 'SUCCESS'
+                    emailext(
+                        subject: "Build #${currentBuild.number} Successful: ${currentBuild.fullDisplayName}",
+                        body: """
+                            The build was successful!
+                            Build Details: ${BUILD_URL}
+                            Build Number: ${currentBuild.number}
+                            Build Status: ${currentBuild.currentResult}
+                        """,
+                        to: 'malek.khelil@esprit.tn'
+                    )
+                }
             }
-            emailext subject: "Pipeline Status  ${currentBuild.result}: ${currentBuild.projectName}",
-                body: """<html>
-                            <body>
-                                <p>Dear Team,</p>
-                                <p>The pipeline for project <strong>${currentBuild.projectName}</strong> has completed with the status: <strong>${currentBuild.result}</strong>.</p>
-                                <p>Thank you,</p>
-                                <p>Your Jenkins Server</p>
-                            </body>
-                        </html>""",
-                to: 'malek.kh211@gmail.com',
-                mimeType: 'text/html'
         }
+    }
+    post {
+       success {
+           emailext (
+           subject: "Build Successful",
+           body: "The build was successful. Job: ${env.JOB_NAME} - Build #${env.BUILD_NUMBER}",
+           to: "malek.khelil@esprit.tn"
+                                )
+                            }
+       failure {
+           emailext (
+           subject: "Build Failed",
+            body: "The build failed. Job: ${env.JOB_NAME} - Build #${env.BUILD_NUMBER}\n\nConsole Output:\n${currentBuild.rawBuild.getLog(100)}",
+            to: to: "malek.khelil@esprit.tn",
+             attachLog: true
+            )
+       }
     }
 }
