@@ -59,9 +59,8 @@ pipeline {
                 sh 'mvn deploy'
             }
         }
-    }
 
-       stage('Email Notification') {
+        stage('Email Notification') {
             steps {
                 script {
                     currentBuild.result = 'SUCCESS'
@@ -79,21 +78,22 @@ pipeline {
             }
         }
     }
+
     post {
-       success {
-           emailext (
-           subject: "Build Successful",
-           body: "The build was successful. Job: ${env.JOB_NAME} - Build #${env.BUILD_NUMBER}",
-           to: "malek.khelil@esprit.tn"
-                                )
-                            }
-       failure {
-           emailext (
-           subject: "Build Failed",
-            body: "The build failed. Job: ${env.JOB_NAME} - Build #${env.BUILD_NUMBER}\n\nConsole Output:\n${currentBuild.rawBuild.getLog(100)}",
-            to: "malek.khelil@esprit.tn",
-             attachLog: true
+        success {
+            emailext (
+                subject: "Build Successful",
+                body: "The build was successful. Job: ${env.JOB_NAME} - Build #${env.BUILD_NUMBER}",
+                to: "malek.khelil@esprit.tn"
             )
-       }
+        }
+        failure {
+            emailext (
+                subject: "Build Failed",
+                body: "The build failed. Job: ${env.JOB_NAME} - Build #${env.BUILD_NUMBER}\n\nConsole Output:\n${currentBuild.rawBuild.getLog(100)}",
+                to: "malek.khelil@esprit.tn",
+                attachLog: true
+            )
+        }
     }
 }
