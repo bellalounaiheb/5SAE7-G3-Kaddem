@@ -48,18 +48,37 @@ pipeline {
             }
         }
 
+        stage("Build") {
+                       steps {
+                        sh 'mvn install -DskipTests=true'
+                        }
+                    }
+
         stage('SonarQube') {
             steps {
                 sh 'mvn sonar:sonar -Dsonar.login=admin -Dsonar.password=Sonarqube12345# -Dmaven.test.skip=true'
             }
         }
 
-        stage('Deploy to Nexus') {
-            steps {
-                sh 'mvn deploy'
-            }
-        }
-
+      stage('Nexus Deploy ') {
+                 steps {
+                     nexusArtifactUploader artifacts: [
+                         [
+                             artifactId: 'kaddem',
+                             classifier: '',
+                             file: 'target/kaddem.jar',
+                             type: 'jar'
+                         ]
+                     ],
+                      credentialsId: 'nexus3',
+                      groupId: 'tn.esprit.spring',
+                      nexusUrl: 'localhost:8081',
+                      nexusVersion: 'nexus3',
+                      protocol: 'http',
+                      repository: 'kaddem',
+                      version: '0.0.1-SNAPSHOT'
+                 }
+             }
         stage('Email Notification') {
             steps {
                 script {
