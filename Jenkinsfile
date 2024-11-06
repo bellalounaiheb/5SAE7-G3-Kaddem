@@ -28,16 +28,22 @@ pipeline {
                 sh 'mvn test'
             }
         }
-stage('JaCoCo coverage report') {
-    steps {
-        step([$class: 'JacocoPublisher',
-              execPattern: '**/target/jacoco.exec',
-              classPattern: '**/classes',
-              sourcePattern: '**/src',
-              exclusionPattern: '*/target/**/,**/*Test*,**/*_javassist/**'
-        ])
-    }
-}
+        stage('Rapport JaCoCo') {
+            steps {
+                sh 'mvn test'
+                sh 'mvn jacoco:report'
+            }
+        }
+        stage('JaCoCo coverage report') {
+            steps {
+                step([$class: 'JacocoPublisher',
+                      execPattern: '**/target/jacoco.exec',
+                      classPattern: '**/classes',
+                      sourcePattern: '**/src',
+                      exclusionPattern: '*/target/**/,**/*Test*,**/*_javassist/**'
+                ])
+            }
+        }
 
               stage("Build") {
                  steps {
@@ -60,3 +66,27 @@ stage('JaCoCo coverage report') {
               }
           }
       }
+
+
+ post {
+        always {
+            script {
+                currentBuild.result = currentBuild.currentResult
+            }
+
+            emailext subject: "Pipeline Status  ${currentBuild.result}: ${currentBuild.projectName}",
+                 body: """<html>
+                        <body>
+                            <p>Dear Team,</p>
+                            <p>The pipeline for project <strong>${currentBuild.projectName}</strong> has completed with the status: <strong>${currentBuild.result}</strong>.</p>
+                            <p>Thank you,</p>
+                            <p>Your Jenkins Server</p>
+                        </body>
+                    </html>""",
+            to: 'malek.kh211@gmail.com',
+            mimeType: 'text/html'
+
+          }
+        }
+
+    }
