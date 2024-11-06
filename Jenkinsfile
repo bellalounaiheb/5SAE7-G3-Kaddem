@@ -91,7 +91,7 @@ pipeline {
            emailext (
            subject: "Build Failed",
             body: "The build failed. Job: ${env.JOB_NAME} - Build #${env.BUILD_NUMBER}\n\nConsole Output:\n${currentBuild.rawBuild.getLog(100)}",
-            to: to: "malek.khelil@esprit.tn",
+            to: "malek.khelil@esprit.tn",
              attachLog: true
             )
        }
