@@ -11,18 +11,35 @@ pipeline {
                     url: 'https://github.com/bellalounaiheb/5SAE7-G3-Kaddem.git'
             }
         }
-        stage('Compile Stage') {
-            steps {
-                sh 'mvn clean compile'
-            }
-        }
 
-        // Adding the Test Stage
-        stage('MVN TEST') {
+
+              stage('MVN CLEAN'){
+                  steps{
+                      sh 'mvn clean';
+                  }
+              }
+              stage('MVN COMPILE'){
+                  steps{
+                      sh 'mvn compile';
+                  }
+              }
+      stage('Tests - Mockito/JUnit') {
             steps {
                 sh 'mvn test'
             }
         }
+              stage('JaCoCo Reports') {
+              steps {
+                  sh 'mvn jacoco:report'
+              }
+          }
+              stage("Build") {
+                 steps {
+                  sh 'mvn install -DskipTests=true'
+                  }
+              }
+
+
 
         stage('SonarQube') {
             steps {
@@ -31,9 +48,9 @@ pipeline {
          }
 
         stage('Nexus Deployment') {
-            steps {
-                sh 'mvn deploy -Dmaven.test.skip=true'
-            }
-        }
-    }
-}
+                  steps {
+                      sh 'mvn deploy -Dmaven.test.skip=true'
+                  }
+              }
+          }
+      }
