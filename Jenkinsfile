@@ -48,18 +48,18 @@ pipeline {
             }
         }
 
-
-         stage('SonarQube') {
-             steps {
+        stage('SonarQube') {
+            steps {
                 sh 'mvn sonar:sonar -Dsonar.login=admin -Dsonar.password=Sonarqube12345# -Dmaven.test.skip=true'
-           }
-         }
-
-      stage('Deploy to Nexus') {
-                steps {
-                    sh 'mvn deploy'
-                }
             }
+        }
+
+        stage('Deploy to Nexus') {
+            steps {
+                sh 'mvn deploy'
+            }
+        }
+    }
 
     post {
         always {
