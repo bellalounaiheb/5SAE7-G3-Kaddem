@@ -55,12 +55,11 @@ pipeline {
            }
          }
 
-        stage('Nexus') {
-            steps {
-                sh 'mvn deploy -Dmaven.test.skip=true'
+      stage('Deploy to Nexus') {
+                steps {
+                    sh 'mvn deploy'
+                }
             }
-        }
-    }
 
     post {
         always {
