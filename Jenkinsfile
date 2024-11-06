@@ -28,11 +28,17 @@ pipeline {
                 sh 'mvn test'
             }
         }
-              stage('JaCoCo Reports') {
-              steps {
-                  sh 'mvn jacoco:report'
-              }
-          }
+stage('JaCoCo coverage report') {
+    steps {
+        step([$class: 'JacocoPublisher',
+              execPattern: '**/target/jacoco.exec',
+              classPattern: '**/classes',
+              sourcePattern: '**/src',
+              exclusionPattern: '*/target/**/,**/*Test*,**/*_javassist/**'
+        ])
+    }
+}
+
               stage("Build") {
                  steps {
                   sh 'mvn install -DskipTests=true'
@@ -47,10 +53,10 @@ pipeline {
            }
          }
 
-        stage('Nexus Deployment') {
-                  steps {
-                      sh 'mvn deploy -Dmaven.test.skip=true'
-                  }
+ stage('Nexus') {
+            steps {
+                sh 'mvn deploy -Dmaven.test.skip=true'
+            }
               }
           }
       }
