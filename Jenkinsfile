@@ -17,12 +17,12 @@ pipeline {
             }
         }
 
-         // stage('Unit Test') {
-                           //  steps {
-                                 // Run the tests
-                              //   sh 'mvn test'
-                           //  }
-                       //  }
+          stage('Unit Test') {
+                            steps {
+                                 Run the tests
+                                sh 'mvn test'
+                             }
+                         }
 
 
 
