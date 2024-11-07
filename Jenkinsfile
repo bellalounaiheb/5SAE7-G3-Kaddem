@@ -39,7 +39,7 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 script {
-                    sh 'docker build -t bellalounaiheb/alpine:1.0.0 .'
+                    sh 'docker build -t bellalounaiheb/kaddem:1.0.0 .'
                 }
             }
         }
@@ -51,7 +51,7 @@ pipeline {
                         sh 'echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin'
 
 
-                        sh 'docker push bellalounaiheb/alpine:1.0.0'
+                        sh 'docker push bellalounaiheb/kaddem:1.0.0'
                     }
                 }
             }
