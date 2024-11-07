@@ -15,7 +15,7 @@ services:
   app-kaddem:
     depends_on:
       - mysqlDb
-    image: malekkh/kaddem:0.0.1
+    image: malekkhelil-5sae7-g3-kaddem:0.0.1
     restart: on-failure
     ports:
       - "8082:8082"
