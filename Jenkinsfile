@@ -5,6 +5,11 @@ pipeline {
         maven 'M2_HOME'
     }
 
+    environment {
+        DOCKER_USERNAME = 'malekkh'
+        DOCKER_PASSWORD = 'dockerpass12345'
+    }
+
     stages {
         stage('GIT') {
             steps {
@@ -76,15 +81,15 @@ pipeline {
             }
         }
 
-stage('Deploy Image to DockerHub') {
-    steps {
-        script {
-            echo 'Logging into DockerHub and Pushing Image'
-            sh 'echo $DOCKER_PASSWORD | docker login -u malekkh --password-stdin'
-            sh 'docker push malekkhelil-5sae7-g3-kaddem:0.0.1'
+        stage('Deploy Image to DockerHub') {
+            steps {
+                script {
+                    echo 'Logging into DockerHub and Pushing Image'
+                    sh 'echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin'
+                    sh 'docker push malekkhelil-5sae7-g3-kaddem:0.0.1'
+                }
+            }
         }
-    }
-}
 
         stage('Deploy with Docker Compose') {
             steps {
@@ -95,6 +100,4 @@ stage('Deploy Image to DockerHub') {
             }
         }
     }
-
-
 }
