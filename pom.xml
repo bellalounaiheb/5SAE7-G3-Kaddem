@@ -49,15 +49,10 @@
 
     <distributionManagement>
         <repository>
-            <id>releasesRepo</id>
-            <name>Nexus Releases Repository</name>
-            <url>http://10.0.2.15:8081/repository/maven-releases/</url>
+            <id>deploymentRepo</id>
+            <name>Nexus Repository</name>
+            <url>http://localhost:8081/repository/maven-releases/</url>
         </repository>
-        <snapshotRepository>
-            <id>snapshotsRepo</id>
-            <name>Nexus Snapshots Repository</name>
-            <url>http://10.0.2.15:8081/repository/maven-snapshots/</url>
-        </snapshotRepository>
     </distributionManagement>
 
     <build>

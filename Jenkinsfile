@@ -65,10 +65,9 @@ pipeline {
               }
           }
 
-        stage('Deploy to Nexus') {
+        stage('Nexus') {
             steps {
-                echo 'Deploying to Nexus Repository'
-                sh 'mvn clean deploy -DskipTests'
+                sh 'mvn deploy -Dmaven.test.skip=true'
             }
         }
     }
