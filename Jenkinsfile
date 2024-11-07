@@ -55,6 +55,12 @@ pipeline {
                     }
                 }
 
+                stage("Stoping containers"){
+                            steps{
+                                sh "docker-compose down"
+                            }
+                        }
+
                    stage('Running containers') {
                             steps {
                                 echo 'Starting Docker containers...'
