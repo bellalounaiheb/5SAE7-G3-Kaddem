@@ -86,7 +86,7 @@ pipeline {
                 script {
                     echo 'Logging into DockerHub and Pushing Image'
                     sh 'echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin'
-                    sh 'docker push malekkhelil-5sae7-g3-kaddem:0.0.1'
+                    sh 'docker push malekkh/malekkhelil-5sae7-g3-kaddem:0.0.1'
                 }
             }
         }
