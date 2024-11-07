@@ -32,7 +32,24 @@ pipeline {
                 sh 'mvn test'
             }
         }
+   stage('Generate JaCoCo Report') {
+            steps {
+                echo 'Generating JaCoCo Report'
+                sh 'mvn jacoco:report'
+            }
+        }
 
+        stage('JaCoCo Coverage Report') {
+            steps {
+                echo 'Publishing JaCoCo Coverage Report'
+                step([$class: 'JacocoPublisher',
+                      execPattern: '**/target/jacoco.exec',
+                      classPattern: '**/classes',
+                      sourcePattern: '**/src',
+                      exclusionPattern: '/target/**/,**/*Test,**/*_javassist/**'
+                ])
+            }
+        }
 
         stage('SonarQube') {
             steps {
