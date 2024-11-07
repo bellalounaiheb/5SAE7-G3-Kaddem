@@ -4,6 +4,10 @@ pipeline {
         jdk 'JAVA_HOME'
         maven 'M2_HOME'
     }
+    environment {
+        DOCKER_USERNAME = 'malekkh'
+        DOCKER_PASSWORD = 'dockerpass12345?'
+    }
     stages {
         stage('GIT') {
             steps {
@@ -79,7 +83,7 @@ pipeline {
             steps {
                 script {
                     echo 'Logging into DockerHub and Pushing Image'
-                    sh 'docker login -u malekkh -p dockerpass12345?'
+                    sh 'docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD'
                     sh 'docker push malekkhelil-5sae7-g3-kaddem:0.0.1'
                 }
             }
@@ -94,23 +98,6 @@ pipeline {
             }
         }
     }
-    post {
-        success {
-            mail to: 'malek.kh211@gmail.com',
-                 subject: "Pipeline Jenkins - Success - Build #${BUILD_NUMBER}",
-                 body: """Pipeline Jenkins
 
-                 Final Report: The pipeline has completed successfully. Build number: ${BUILD_NUMBER}. No action required."""
-        }
-        failure {
-            mail to: 'malek.kh211@gmail.com',
-                 subject: "Pipeline Jenkins - Failure - Build #${BUILD_NUMBER}",
-                 body: """Pipeline Jenkins
 
-                 Final Report: The pipeline has failed. Build number: ${BUILD_NUMBER}. Please check the logs and take necessary actions."""
-        }
-        always {
-            echo 'Pipeline completed.'
-        }
-    }
 }
