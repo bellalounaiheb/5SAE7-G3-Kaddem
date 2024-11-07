@@ -1,14 +1,15 @@
-# Use an official OpenJDK image to run Java applications
 FROM openjdk:17-jdk-alpine
 
-# Set the working directory inside the container
+ENV NEXUS_REPO_URL=http://192.168.33.10:8081/repository/maven-releases
+ENV ARTIFACT_GROUP=tn/esprit/spring
+ENV ARTIFACT_NAME=kaddem
+ENV ARTIFACT_VERSION=0.0.1
+ENV JAR_NAME=kaddem-O.O.1.jar
+
 WORKDIR /app
 
-# Copy the jar file from the build context into the container
-COPY target/kaddem-O.O.1.jar /app/app.jar
+RUN wget "${NEXUS_REPO_URL}/${ARTIFACT_GROUP}/${ARTIFACT_NAME}/${ARTIFACT_VERSION}/${JAR_NAME}" -O app.jar
 
-# Expose the port that your Spring Boot app will run on (8089)
 EXPOSE 8089
 
-# Run the jar file when the container starts
 ENTRYPOINT ["java", "-jar", "app.jar"]
