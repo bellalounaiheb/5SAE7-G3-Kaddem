@@ -26,34 +26,44 @@ pipeline {
             }
         }
 
-        stage('Build Package') {
+        stage('Tests - JUnit/Mockito') {
             steps {
-                echo 'Running Maven Package'
-                sh 'mvn package'
+                echo 'Running Tests'
+                sh 'mvn test'
             }
         }
 
-stage('Tests - JUnit/Mockito') {
-    steps {
-        echo 'Running Tests'
-        sh 'mvn test'
-    }
-}
+        stage('Generate JaCoCo Report') {
+            steps {
+                echo 'Generating JaCoCo Report'
+                sh 'mvn jacoco:report'
+            }
+        }
 
+        stage('JaCoCo Coverage Report') {
+            steps {
+                echo 'Publishing JaCoCo Coverage Report'
+                step([$class: 'JacocoPublisher',
+                      execPattern: '**/target/jacoco.exec',
+                      classPattern: '**/classes',
+                      sourcePattern: '**/src',
+                      exclusionPattern: '/target/**/,**/*Test,**/*_javassist/**'
+                ])
+            }
+        }
 
+        stage('SonarQube') {
+            steps {
+                echo 'Running SonarQube Analysis'
+                sh 'mvn sonar:sonar -Dsonar.login=admin -Dsonar.password=Sonarqube12345#'
+            }
+        }
 
-    stage('SonarQube') {
-              steps {
-                  sh 'mvn sonar:sonar -Dsonar.login=admin -Dsonar.password=Sonarqube12345# -Dmaven.test.skip=true'
-              }
-          }
-
-stage('Deploy to Nexus') {
-    steps {
-        echo 'Deploying to Nexus Repository'
-        sh 'mvn clean deploy -DskipTests'
-    }
-}
-
+        stage('Deploy to Nexus') {
+            steps {
+                echo 'Deploying to Nexus Repository'
+                sh 'mvn clean deploy'
+            }
+        }
     }
 }
