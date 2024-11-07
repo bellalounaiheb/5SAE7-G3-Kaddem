@@ -36,17 +36,13 @@ pipeline {
 
         stage('Package') {
             steps {
-                dir("$BASE_DIR") {
-                    sh 'mvn package -DskipTests'
-                }
+                sh 'mvn package -DskipTests'
             }
         }
 
         stage('Install') {
             steps {
-                dir("$BASE_DIR") {
-                    sh 'mvn install -DskipTests'
-                }
+                sh 'mvn install -DskipTests'
             }
         }
 
