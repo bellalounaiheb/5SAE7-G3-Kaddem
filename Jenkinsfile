@@ -33,12 +33,12 @@ pipeline {
             }
         }
 
-        stage('Tests - JUnit/Mockito') {
-            steps {
-                echo 'Running Tests'
-                sh 'mvn test'
-            }
-        }
+stage('Tests - JUnit/Mockito') {
+    steps {
+        echo 'Running Tests'
+        sh 'mvn test -DskipTests=false'
+    }
+}
 
         stage('Generate JaCoCo Report') {
             steps {
@@ -65,11 +65,12 @@ pipeline {
               }
           }
 
-         stage('Deploy to Nexus') {
-             steps {
-                 echo 'Deploying to Nexus Repository'
-                 sh 'mvn clean deploy -DskipTests'
-             }
-         }
+stage('Deploy to Nexus') {
+    steps {
+        echo 'Deploying to Nexus Repository'
+        sh 'mvn clean deploy -DskipTests'
+    }
+}
+
     }
 }
