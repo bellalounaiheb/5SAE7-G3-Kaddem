@@ -61,31 +61,41 @@ pipeline {
                         }
                     }
                 }
-                  stage('Build Docker Image') {
-                            steps {
-                                script {
-                                    // Build Docker image with the latest Git commit as tag
-                                    docker.build("${DOCKER_IMAGE}:${env.BUILD_NUMBER}")
-                                }
-                            }
-                        }
-
-                        stage('Push Docker Image') {
-                            steps {
-                                script {
-                                    docker.withRegistry('https://registry.hub.docker.com', 'dockerhub-credentials-id') {
-                                        docker.image("${DOCKER_IMAGE}:${env.BUILD_NUMBER}").push()
-                                        // Optionally push a 'latest' tag for easy reference
-                                        docker.image("${DOCKER_IMAGE}:${env.BUILD_NUMBER}").push('latest')
-                                    }
-                                }
-                            }
-                        }
 
         stage('Nexus Deployment') {
             steps {
                 sh 'mvn deploy -Dmaven.test.skip=true'
             }
         }
-    }
+         stage("Docker Build") {
+                            steps {
+                                echo "Building Docker image..."
+                                sh "docker build -t zied22/zied_g3_kaddem ."
+                                echo 'Docker image built successfully!'
+                            }
+                        }
+
+                        stage('Pushing to DockerHub') {
+                            steps {
+                                withCredentials([usernamePassword(credentialsId: 'dockerhub', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
+                                    sh 'echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin'
+                                    sh 'docker push zied22/zied_g3_kaddem'
+                                }
+                            }
+                        }
+
+                        stage("Stoping containers"){
+                                    steps{
+                                        sh "docker-compose down"
+                                    }
+                                }
+
+                           stage('Running containers') {
+                                    steps {
+                                        echo 'Starting Docker containers...'
+                                        sh 'docker-compose up -d'
+                                        echo 'Containers started!'
+                                    }
+                                }
+            }
 }
