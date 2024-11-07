@@ -7,7 +7,7 @@ pipeline {
     stages {
         stage('GIT') {
             steps {
-                git branch: 'IhebBELLALOUNA-5SAE7-G3',
+                git branch: 'OnsHAMZAOUI-5SAE7-G3',
                     url: 'https://github.com/bellalounaiheb/5SAE7-G3-Kaddem.git'
             }
         }
@@ -16,10 +16,16 @@ pipeline {
                 sh 'mvn clean compile'
             }
         }
+        stage('Unit Test') {
+                     steps {
+                         // Run the tests
+                         sh 'mvn test'
+                     }
+                 }
 
          stage('SonarQube') {
              steps {
-                sh 'mvn sonar:sonar -Dsonar.login=admin -Dsonar.password=Admin123456- -Dmaven.test.skip=true'
+                sh 'mvn sonar:sonar -Dsonar.login=admin -Dsonar.password=14770850Ons@- -Dmaven.test.skip=true'
            }
          }
 
