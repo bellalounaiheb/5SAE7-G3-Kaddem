@@ -54,10 +54,7 @@ pipeline {
 
         stage('Build Docker Image') {
             steps {
-                script {
-                    // Build Docker image with the latest Git commit as tag
-                    docker.build("${DOCKER_IMAGE}:${env.BUILD_NUMBER}")
-                }
+                sh 'docker build -t kaddem:latest .'
             }
         }
 
