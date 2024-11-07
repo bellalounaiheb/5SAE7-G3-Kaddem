@@ -1,0 +1,38 @@
+version: '3.8'
+
+services:
+  mysqldb:
+    image: mysql:5.7
+    restart: unless-stopped
+    container_name: mysqldb
+    environment:
+      MYSQL_DATABASE: tpachato
+      MYSQL_ROOT_PASSWORD: ""
+      MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
+    ports:
+      - 3306:3306
+    volumes:
+      - db:/var/lib/mysql
+
+  app:
+    build: .
+    depends_on:
+      - mysqldb
+    image: bellalounaiheb/alpine
+    restart: on-failure
+    container_name: back
+    stdin_open: true
+    tty: true
+    ports:
+      - "8089:8089"
+    environment:
+      SPRING_APPLICATION_JSON: '{
+        "spring.datasource.url": "jdbc:mysql://mysqldb:3306/tpachato?createDatabaseIfNotExist=true",
+        "spring.datasource.username": "root",
+        "spring.datasource.password": null,
+        "spring.jpa.properties.hibernate.dialect": "org.hibernate.dialect.MySQL5InnoDBDialect",
+        "spring.jpa.hibernate.ddl-auto": "update"
+      }'
+
+volumes:
+  db:

@@ -37,5 +37,14 @@ pipeline {
             }
         }
 
+        stage('Docker Build and Compose Up') {
+                    steps {
+                        script {
+                            sh 'docker build -t myapp-image --build-arg JAR_FILE=kaddem-0.0.1.jar .'
+                            sh 'docker-compose up -d'
+                        }
+                    }
+                }
+
     }
 }
