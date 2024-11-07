@@ -76,15 +76,15 @@ pipeline {
             }
         }
 
-        stage('Deploy Image to DockerHub') {
-            steps {
-                script {
-                    echo 'Logging into DockerHub and Pushing Image'
-                    sh 'docker login -u malekkh -p dockerpass12345?'
-                    sh 'docker push malekkhelil-5sae7-g3-kaddem:0.0.1'
-                }
-            }
+stage('Deploy Image to DockerHub') {
+    steps {
+        script {
+            echo 'Logging into DockerHub and Pushing Image'
+            sh 'echo $DOCKER_PASSWORD | docker login -u malekkh --password-stdin'
+            sh 'docker push malekkhelil-5sae7-g3-kaddem:0.0.1'
         }
+    }
+}
 
         stage('Deploy with Docker Compose') {
             steps {
