@@ -36,25 +36,5 @@ pipeline {
                 sh 'mvn deploy -Dmaven.test.skip=true'
             }
         }
-
-        stage('Deploy with Docker Compose') {
-            steps {
-                script {
-                    def backExists = sh(script: 'docker ps -a --filter "name=back" --format "{{.Names}}"', returnStdout: true).trim()
-                    def dbExists = sh(script: 'docker ps -a --filter "name=mysqldb" --format "{{.Names}}"', returnStdout: true).trim()
-
-                    if (backExists) {
-                        sh 'docker stop back'
-                        sh 'docker rm back'
-                    }
-                    if (dbExists) {
-                        sh 'docker stop mysqldb'
-                        sh 'docker rm mysqldb'
-                    }
-
-                    sh 'docker compose up -d'
-                }
-            }
-        }
     }
 }
