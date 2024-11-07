@@ -37,5 +37,30 @@ pipeline {
                 sh 'mvn deploy -Dmaven.test.skip=true'
             }
         }
+
+        stage("Docker Build") {
+                    steps {
+                        echo "Building Docker image..."
+                        sh "docker build -t zied22/zied_g3_kaddem ."
+                        echo 'Docker image built successfully!'
+                    }
+                }
+
+                stage('Pushing to DockerHub') {
+                    steps {
+                        withCredentials([usernamePassword(credentialsId: 'dockerhub', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
+                            sh 'echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin'
+                            sh 'docker push zied22/zied_g3_kaddem'
+                        }
+                    }
+                }
+
+                   stage('Running containers') {
+                            steps {
+                                echo 'Starting Docker containers...'
+                                sh 'docker-compose up -d'
+                                echo 'Containers started!'
+                            }
+                        }
     }
 }
