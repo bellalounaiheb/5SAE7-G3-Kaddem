@@ -1,26 +1,55 @@
-version: '3'
+version: '3.8'
 services:
+  app:
+    image: yasminerajhi/kaddem:latest  # Docker image for your application
+    ports:
+      - "8082:8082"  # Map to your application’s port in Dockerfile
+    environment:
+      - JAVA_OPTS=-Xmx512m  # Customize memory settings as needed
+    depends_on:
+      - sonarqube
+      - nexus
+      - prometheus
+      - grafana
+
   jenkins:
     image: jenkins/jenkins
     ports:
       - "8080:8080"
     volumes:
       - jenkins_data:/var/jenkins_home
+
   sonarqube:
     image: sonarqube
     ports:
       - "9000:9000"
+    environment:
+      - SONAR_ES_BOOTSTRAP_CHECKS_DISABLE=true
+
   grafana:
     image: grafana/grafana
     ports:
       - "3000:3000"
+    volumes:
+      - grafana_data:/var/lib/grafana
+
   prometheus:
     image: prom/prometheus
     ports:
       - "9090:9090"
+    volumes:
+      - prometheus_data:/prometheus
+    # You may need to add a configuration file for Prometheus to monitor your services
+
   nexus:
     image: sonatype/nexus3
     ports:
       - "8081:8081"
+    volumes:
+      - nexus_data:/nexus-data
+
 volumes:
   jenkins_data:
+  grafana_data:
+  prometheus_data:
+  nexus_data:

@@ -4,6 +4,9 @@ pipeline {
         jdk 'JAVA_HOME'
         maven 'M2_HOME'
     }
+    environment {
+        DOCKER_IMAGE = "yasminerajhi/yasminerajhi-5sae7-g3" // Docker image name
+    }
     stages {
         stage('GIT') {
             steps {
@@ -11,24 +14,68 @@ pipeline {
                     url: 'https://github.com/bellalounaiheb/5SAE7-G3-Kaddem.git'
             }
         }
-        stage('Compile Stage') {
+
+        stage('Clean Stage') {
             steps {
-                sh 'mvn clean compile'
+                sh 'mvn clean'
             }
         }
 
-        stage('Test Unitaire') {
+        stage('Compile Stage') {
+            steps {
+                sh 'mvn compile'
+            }
+        }
+
+        stage('Unit Testing') {
             steps {
                 // Run the tests
                 sh 'mvn test'
             }
         }
 
-         stage('SonarQube') {
-             steps {
+        stage('Package') {
+            steps {
+                dir("$BASE_DIR") {
+                    sh 'mvn package -DskipTests'
+                }
+            }
+        }
+
+        stage('Install') {
+            steps {
+                dir("$BASE_DIR") {
+                    sh 'mvn install -DskipTests'
+                }
+            }
+        }
+
+        stage('SonarQube') {
+            steps {
                 sh 'mvn sonar:sonar -Dsonar.login=admin -Dsonar.password=s0nAr_qube__ -Dmaven.test.skip=true'
-           }
-         }
+            }
+        }
+
+        stage('Build Docker Image') {
+            steps {
+                script {
+                    // Build Docker image with the latest Git commit as tag
+                    docker.build("${DOCKER_IMAGE}:${env.BUILD_NUMBER}")
+                }
+            }
+        }
+
+        stage('Push Docker Image') {
+            steps {
+                script {
+                    docker.withRegistry('https://registry.hub.docker.com', 'dockerhub-credentials-id') {
+                        docker.image("${DOCKER_IMAGE}:${env.BUILD_NUMBER}").push()
+                        // Optionally push a 'latest' tag for easy reference
+                        docker.image("${DOCKER_IMAGE}:${env.BUILD_NUMBER}").push('latest')
+                    }
+                }
+            }
+        }
 
         stage('Nexus') {
             steps {
