@@ -72,14 +72,14 @@ pipeline {
             }
         }
 
-        stage('Build Docker Image') {
-            steps {
-                script {
-                    echo 'Building Docker Image'
-                    def dockerImage = docker.build("malekkhelil-5sae7-g3-kaddem:0.0.1")
-                }
-            }
+stage('Build Docker Image') {
+    steps {
+        script {
+            echo 'Building Docker Image'
+            def dockerImage = docker.build("malekkh/malekkhelil-5sae7-g3-kaddem:0.0.1")
         }
+    }
+}
 
         stage('Deploy Image to DockerHub') {
             steps {
