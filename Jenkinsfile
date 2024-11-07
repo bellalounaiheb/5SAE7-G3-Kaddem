@@ -4,10 +4,7 @@ pipeline {
         jdk 'JAVA_HOME'
         maven 'M2_HOME'
     }
-    environment {
-        DOCKER_USERNAME = 'malekkh'
-        DOCKER_PASSWORD = 'dockerpass12345?'
-    }
+
     stages {
         stage('GIT') {
             steps {
@@ -83,7 +80,7 @@ pipeline {
             steps {
                 script {
                     echo 'Logging into DockerHub and Pushing Image'
-                    sh 'docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD'
+                    sh 'docker login -u malekkh -p dockerpass12345?'
                     sh 'docker push malekkhelil-5sae7-g3-kaddem:0.0.1'
                 }
             }
