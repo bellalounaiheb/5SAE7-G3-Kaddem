@@ -38,6 +38,17 @@ pipeline {
                          sh 'mvn test'
                      }
                  }
+                     stage('Package') {
+                             steps {
+                                 sh 'mvn package -DskipTests'
+                             }
+                         }
+
+                         stage('Install') {
+                             steps {
+                                 sh 'mvn install -DskipTests'
+                             }
+                         }
 
               stage('Sonarqube') {
                     steps {
@@ -50,6 +61,26 @@ pipeline {
                         }
                     }
                 }
+                  stage('Build Docker Image') {
+                            steps {
+                                script {
+                                    // Build Docker image with the latest Git commit as tag
+                                    docker.build("${DOCKER_IMAGE}:${env.BUILD_NUMBER}")
+                                }
+                            }
+                        }
+
+                        stage('Push Docker Image') {
+                            steps {
+                                script {
+                                    docker.withRegistry('https://registry.hub.docker.com', 'dockerhub-credentials-id') {
+                                        docker.image("${DOCKER_IMAGE}:${env.BUILD_NUMBER}").push()
+                                        // Optionally push a 'latest' tag for easy reference
+                                        docker.image("${DOCKER_IMAGE}:${env.BUILD_NUMBER}").push('latest')
+                                    }
+                                }
+                            }
+                        }
 
         stage('Nexus Deployment') {
             steps {
