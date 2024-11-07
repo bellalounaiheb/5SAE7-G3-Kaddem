@@ -32,7 +32,8 @@ pipeline {
                 sh 'mvn test'
             }
         }
-   stage('Generate JaCoCo Report') {
+
+        stage('Generate JaCoCo Report') {
             steps {
                 echo 'Generating JaCoCo Report'
                 sh 'mvn jacoco:report'
@@ -51,15 +52,17 @@ pipeline {
             }
         }
 
-   stage('SonarQube') {
-                steps {
-                   sh 'mvn sonar:sonar -Dsonar.login=admin -Dsonar.password=Sonarqube12345# -Dmaven.test.skip=true'
-              }
+        stage('SonarQube') {
+            steps {
+                echo 'Running SonarQube Analysis'
+                sh 'mvn sonar:sonar -Dsonar.login=admin -Dsonar.password=Sonarqube12345#'
             }
-    stage('Deploy to Nexus') {
+        }
+
+        stage('Deploy to Nexus') {
             steps {
                 echo 'Deploying to Nexus Repository'
-                sh 'mvn deploy -Dmaven.test.skip=true'
+                sh 'mvn clean deploy'
             }
         }
     }
