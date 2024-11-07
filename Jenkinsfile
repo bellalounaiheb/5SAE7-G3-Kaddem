@@ -52,26 +52,9 @@ pipeline {
                         sh 'docker rm mysqldb'
                     }
 
-                    sh 'docker-compose up -d'
+                    sh 'docker compose up -d'
                 }
             }
         }
-
-        stage('Run Prometheus') {
-           steps {
-              script {
-                 sh 'docker start prometheus'
-              }
-           }
-        }
-
-        stage('Run Grafana') {
-            steps {
-               script {
-                  sh 'docker start grafana'
-               }
-            }
-        }
-
     }
 }
