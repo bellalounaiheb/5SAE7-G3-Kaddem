@@ -17,6 +17,13 @@ pipeline {
             }
         }
 
+        stage('Unit Test') {
+            steps {
+                // Run the tests
+                sh 'mvn test'
+            }
+        }
+
          stage('SonarQube') {
              steps {
                 sh 'mvn sonar:sonar -Dsonar.login=admin -Dsonar.password=s0nAr_qube__ -Dmaven.test.skip=true'
