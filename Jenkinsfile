@@ -66,26 +66,24 @@ pipeline {
             }
         }
 
-
-              stage('Build Docker Image') {
-                    steps {
-                        script {
-                            echo 'Building Docker Image'
-                            def dockerImage = docker.build("malekkh/kaddem:0.0.1")
-                        }
-                    }
+        stage('Build Docker Image') {
+            steps {
+                script {
+                    echo 'Building Docker Image'
+                    def dockerImage = docker.build("malekkh/kaddem:0.0.1")
                 }
+            }
+        }
 
-                stage('Deploy Image to DockerHub') {
-                    steps {
-                        script {
-                            echo 'Logging into DockerHub and Pushing Image'
-                            sh 'docker login -u malekkh -p dockerpass12345?'
-                            sh 'docker push malekkh/kaddem:0.0.1'
-                        }
-                    }
+        stage('Deploy Image to DockerHub') {
+            steps {
+                script {
+                    echo 'Logging into DockerHub and Pushing Image'
+                    sh 'docker login -u malekkh -p dockerpass12345?'
+                    sh 'docker push malekkhelil/kaddem:0.0.1'
                 }
-
+            }
+        }
 
         stage('Deploy with Docker Compose') {
             steps {
@@ -95,7 +93,8 @@ pipeline {
                 }
             }
         }
- post {
+    }
+    post {
         success {
             mail to: 'malek.kh211@gmail.com',
                  subject: "Pipeline Jenkins - Success - Build #${BUILD_NUMBER}",
@@ -113,7 +112,5 @@ pipeline {
         always {
             echo 'Pipeline completed.'
         }
-    }
-}
     }
 }
