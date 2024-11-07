@@ -33,9 +33,21 @@ pipeline {
 
         stage('Nexus Deployment') {
             steps {
-                sh 'mvn deploy -Dmaven.test.skip=true'
+                script {
+                    def artifactExists = sh(
+                        script: 'curl -s -o /dev/null -w "%{http_code}" -u admin:admin "http://192.167.33.10:8087/repository/maven-releases/tn/esprit/spring/kaddem/0.0.1/kaddem-0.0.1.jar"',
+                        returnStdout: true
+                    ).trim()
+
+                    if (artifactExists != '200') {
+                        sh 'mvn deploy -Dmaven.test.skip=true'
+                    } else {
+                        echo 'Artifact already exists on Nexus; skipping deployment.'
+                    }
+                }
             }
         }
+
         stage('Build Docker Image') {
             steps {
                 script {
@@ -43,19 +55,27 @@ pipeline {
                 }
             }
         }
+
         stage('Push to Docker Hub') {
             steps {
                 script {
-                    withCredentials([usernamePassword(credentialsId: 'docker-hub-credentials', passwordVariable: 'DOCKER_PASSWORD', usernameVariable: 'DOCKER_USERNAME')]) {
+                    def imageExists = sh(
+                        script: 'curl -s -o /dev/null -w "%{http_code}" -u admin:admin "https://hub.docker.com/v2/repositories/bellalounaiheb/kaddem/tags/1.0.0/"',
+                        returnStdout: true
+                    ).trim()
 
-                        sh 'echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin'
-
-
-                        sh 'docker push bellalounaiheb/kaddem:1.0.0'
+                    if (imageExists != '200') {
+                        withCredentials([usernamePassword(credentialsId: 'docker-hub-credentials', passwordVariable: 'DOCKER_PASSWORD', usernameVariable: 'DOCKER_USERNAME')]) {
+                            sh 'echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin'
+                            sh 'docker push bellalounaiheb/kaddem:1.0.0'
+                        }
+                    } else {
+                        echo 'Docker image already exists on Docker Hub; skipping push.'
                     }
                 }
             }
         }
+
         stage('Deploy with Docker Compose') {
             steps {
                 script {
@@ -63,12 +83,12 @@ pipeline {
                     def dbExists = sh(script: 'docker ps -a --filter "name=mysqldb" --format "{{.Names}}"', returnStdout: true).trim()
 
                     if (backExists) {
-                        sh 'docker stop back'
-                        sh 'docker rm back'
+                        sh 'docker stop back || true'
+                        sh 'docker rm back || true'
                     }
                     if (dbExists) {
-                        sh 'docker stop mysqldb'
-                        sh 'docker rm mysqldb'
+                        sh 'docker stop mysqldb || true'
+                        sh 'docker rm mysqldb || true'
                     }
 
                     sh 'docker compose up -d'
