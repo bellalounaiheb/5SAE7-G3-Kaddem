@@ -11,7 +11,7 @@ WORKDIR /app
 COPY ${JAR_FILE} app.jar
 
 # Expose the application's port (replace 8082 with your app’s port if different)
-EXPOSE 8082
+EXPOSE 8089
 
 # Run the JAR file
 ENTRYPOINT ["java", "-jar", "app.jar"]
