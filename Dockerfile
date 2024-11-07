@@ -2,7 +2,7 @@
 FROM openjdk:17-jdk-slim
 
 # Set the JAR name as a build argument, defaulting to 'target/app.jar'
-ARG JAR_FILE=target/kaddem-1.0.jar
+ARG JAR_FILE=target/kaddem-0.0.1.jar
 
 # Set the working directory in the container
 WORKDIR /app
