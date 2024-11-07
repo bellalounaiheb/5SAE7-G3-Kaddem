@@ -52,12 +52,7 @@
             <artifactId>h2</artifactId>
         </dependency>
 
-        <!-- Swagger Dependencies -->
-        <dependency>
-            <groupId>org.springdoc</groupId>
-            <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
-            <version>2.0.3</version>
-        </dependency>
+
 
 
 
