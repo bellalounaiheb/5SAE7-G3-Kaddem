@@ -8,7 +8,7 @@ pipeline {
 
         stage('GIT') {
             steps {
-                git branch: 'IhebBELLALOUNA-5SAE7-G3',
+                git branch: 'MouhebNaddari-5SAE7-G3',
                     url: 'https://github.com/bellalounaiheb/5SAE7-G3-Kaddem.git'
             }
         }
@@ -27,7 +27,7 @@ pipeline {
 
         stage('SonarQube') {
             steps {
-                sh 'mvn sonar:sonar -Dsonar.login=admin -Dsonar.password=Admin123456- -Dmaven.test.skip=true'
+                sh 'mvn sonar:sonar -Dsonar.login=admin -Dsonar.password=Hunterxhunter1*** -Dmaven.test.skip=true'
             }
         }
 
