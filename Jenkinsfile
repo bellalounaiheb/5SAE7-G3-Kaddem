@@ -65,5 +65,55 @@ pipeline {
                 sh 'mvn clean deploy'
             }
         }
+
+
+              stage('Build Docker Image') {
+                    steps {
+                        script {
+                            echo 'Building Docker Image'
+                            def dockerImage = docker.build("malekkh/kaddem:0.0.1")
+                        }
+                    }
+                }
+
+                stage('Deploy Image to DockerHub') {
+                    steps {
+                        script {
+                            echo 'Logging into DockerHub and Pushing Image'
+                            sh 'docker login -u malekkh -p dockerpass12345?'
+                            sh 'docker push malekkh/kaddem:0.0.1'
+                        }
+                    }
+                }
+
+
+        stage('Deploy with Docker Compose') {
+            steps {
+                script {
+                    echo 'Deploying with Docker Compose'
+                    sh 'docker-compose up -d'
+                }
+            }
+        }
+ post {
+        success {
+            mail to: 'malek.kh211@gmail.com',
+                 subject: "Pipeline Jenkins - Success - Build #${BUILD_NUMBER}",
+                 body: """Pipeline Jenkins
+
+                 Final Report: The pipeline has completed successfully. Build number: ${BUILD_NUMBER}. No action required."""
+        }
+        failure {
+            mail to: 'malek.kh211@gmail.com',
+                 subject: "Pipeline Jenkins - Failure - Build #${BUILD_NUMBER}",
+                 body: """Pipeline Jenkins
+
+                 Final Report: The pipeline has failed. Build number: ${BUILD_NUMBER}. Please check the logs and take necessary actions."""
+        }
+        always {
+            echo 'Pipeline completed.'
+        }
+    }
+}
     }
 }
