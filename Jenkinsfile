@@ -13,11 +13,13 @@ pipeline {
             }
         }
 
+
         stage('Compile Stage') {
             steps {
                 sh 'mvn clean compile'
             }
         }
+
 
         stage('Unit Test') {
             steps {
@@ -25,11 +27,13 @@ pipeline {
             }
         }
 
+
         stage('SonarQube') {
             steps {
                 sh 'mvn sonar:sonar -Dsonar.login=admin -Dsonar.password=Admin123456- -Dmaven.test.skip=true'
             }
         }
+
 
         stage('Nexus Deployment') {
             steps {
@@ -48,6 +52,7 @@ pipeline {
             }
         }
 
+
         stage('Build Docker Image') {
             steps {
                 script {
@@ -55,6 +60,7 @@ pipeline {
                 }
             }
         }
+
 
         stage('Push to Docker Hub') {
             steps {
@@ -75,6 +81,7 @@ pipeline {
                 }
             }
         }
+
 
         stage('Deploy with Docker Compose') {
             steps {
