@@ -80,7 +80,7 @@ pipeline {
                 script {
                     echo 'Logging into DockerHub and Pushing Image'
                     sh 'docker login -u malekkh -p dockerpass12345?'
-                    sh 'docker push malekkhelil/kaddem:0.0.1'
+                    sh 'docker push malekkh/kaddem:0.0.1'
                 }
             }
         }
