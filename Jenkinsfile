@@ -54,10 +54,24 @@ pipeline {
             }
         }
 
-        stage('Nexus') {
-            steps {
-                sh 'mvn deploy -Dmaven.test.skip=true'
-            }
-        }
+              stage('Nexus Deploy ') {
+                    steps {
+                        nexusArtifactUploader artifacts: [
+                            [
+                                artifactId: 'kaddem',
+                                classifier: '',
+                                file: 'target/kaddem.jar',
+                                type: 'jar'
+                            ]
+                        ],
+                         credentialsId: 'nexus3',
+                         groupId: 'tn.esprit.spring',
+                         nexusUrl: 'localhost:8081',
+                         nexusVersion: 'nexus3',
+                         protocol: 'http',
+                         repository: 'kaddem',
+                         version: '0.0.1-SNAPSHOT'
+                    }
+                }
     }
 }
