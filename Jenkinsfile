@@ -51,17 +51,15 @@ pipeline {
             }
         }
 
-        stage('SonarQube') {
-            steps {
-                echo 'Running SonarQube Analysis'
-                sh 'mvn sonar:sonar -Dsonar.login=admin -Dsonar.password=Sonarqube12345#'
+   stage('SonarQube') {
+                steps {
+                   sh 'mvn sonar:sonar -Dsonar.login=admin -Dsonar.password=Sonarqube12345# -Dmaven.test.skip=true'
+              }
             }
-        }
-
     stage('Deploy to Nexus') {
             steps {
                 echo 'Deploying to Nexus Repository'
-                sh 'mvn clean deploy -DskipTests'
+                sh 'mvn deploy -Dmaven.test.skip=true'
             }
         }
     }
