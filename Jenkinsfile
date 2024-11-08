@@ -4,6 +4,12 @@ pipeline {
         jdk 'JAVA_HOME'
         maven 'M2_HOME'
     }
+    environment {
+        NEXUS_USER = credentials('nexus-credentials')
+        DOCKER_USER = credentials('docker-hub-credentials')
+        NEXUS_URL = 'http://192.167.33.10:8087/repository/maven-releases'
+        DOCKER_IMAGE = 'bellalounaiheb/IhebBELLALOUNA-5SAE7-G3:1.0.0'
+    }
     stages {
 
         stage('GIT') {
@@ -13,13 +19,11 @@ pipeline {
             }
         }
 
-
         stage('Compile Stage') {
             steps {
                 sh 'mvn clean compile'
             }
         }
-
 
         stage('Unit Test') {
             steps {
@@ -27,19 +31,17 @@ pipeline {
             }
         }
 
-
         stage('SonarQube') {
             steps {
                 sh 'mvn sonar:sonar -Dsonar.login=admin -Dsonar.password=Admin123456- -Dmaven.test.skip=true'
             }
         }
 
-
         stage('Nexus Deployment') {
             steps {
                 script {
                     def artifactExists = sh(
-                        script: 'curl -s -o /dev/null -w "%{http_code}" -u admin:admin "http://192.167.33.10:8087/repository/maven-releases/tn/esprit/spring/kaddem/0.0.1/kaddem-0.0.1.jar"',
+                        script: "curl -s -o /dev/null -w '%{http_code}' -u ${NEXUS_USER_USR}:${NEXUS_USER_PSW} ${NEXUS_URL}/tn/esprit/spring/kaddem/0.0.1/kaddem-0.0.1.jar",
                         returnStdout: true
                     ).trim()
 
@@ -52,28 +54,26 @@ pipeline {
             }
         }
 
-
         stage('Build Docker Image') {
             steps {
                 script {
-                    sh 'docker build -t bellalounaiheb/IhebBELLALOUNA-5SAE7-G3:1.0.0 .'
+                    sh "docker build -t ${DOCKER_IMAGE} ."
                 }
             }
         }
-
 
         stage('Push to Docker Hub') {
             steps {
                 script {
                     def imageExists = sh(
-                        script: 'curl -s -o /dev/null -w "%{http_code}" -u admin:admin "https://hub.docker.com/v2/repositories/bellalounaiheb/kaddem/tags/1.0.0/"',
+                        script: "curl -s -o /dev/null -w '%{http_code}' -u ${DOCKER_USER_USR}:${DOCKER_USER_PSW} https://hub.docker.com/v2/repositories/${DOCKER_IMAGE}/tags/1.0.0/",
                         returnStdout: true
                     ).trim()
 
                     if (imageExists != '200') {
                         withCredentials([usernamePassword(credentialsId: 'docker-hub-credentials', passwordVariable: 'DOCKER_PASSWORD', usernameVariable: 'DOCKER_USERNAME')]) {
-                            sh 'echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin'
-                            sh 'docker push bellalounaiheb/IhebBELLALOUNA-5SAE7-G3'
+                            sh "echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin"
+                            sh "docker push ${DOCKER_IMAGE}"
                         }
                     } else {
                         echo 'Docker image already exists on Docker Hub; skipping push.'
@@ -82,23 +82,19 @@ pipeline {
             }
         }
 
-
         stage('Deploy with Docker Compose') {
             steps {
                 script {
-                    def backExists = sh(script: 'docker ps -a --filter "name=back" --format "{{.Names}}"', returnStdout: true).trim()
-                    def dbExists = sh(script: 'docker ps -a --filter "name=mysqldb" --format "{{.Names}}"', returnStdout: true).trim()
-
-                    if (backExists) {
-                        sh 'docker stop back || true'
-                        sh 'docker rm back || true'
-                    }
-                    if (dbExists) {
-                        sh 'docker stop mysqldb || true'
-                        sh 'docker rm mysqldb || true'
-                    }
-
+                    sh 'docker compose down || true'
                     sh 'docker compose up -d'
+                }
+            }
+        }
+
+        stage('Docker Cleanup') {
+            steps {
+                script {
+                    sh 'docker system prune -f --volumes'
                 }
             }
         }
