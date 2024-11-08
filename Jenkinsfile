@@ -60,7 +60,7 @@ pipeline {
             steps {
                 script {
                     def imageExists = sh(
-                        script: 'curl -s -o /dev/null -w "%{http_code}" -u admin:admin "https://hub.docker.com/v2/repositories/bellalounaiheb/kaddem/tags/1.0.0/"',
+                        script: 'curl -s -o /dev/null -w "%{http_code}" -u admin:admin "https://hub.docker.com/v2/repositories/bellalounaiheb/ihebbellalouna-5sae7-g3/tags/1.0.0/"',
                         returnStdout: true
                     ).trim()
 
@@ -79,7 +79,7 @@ pipeline {
         stage('Deploy with Docker Compose') {
             steps {
                 script {
-                    def containerExists = sh(script: 'docker ps -a --filter "ancestor=bellalounaiheb/IhebBELLALOUNA-5SAE7-G3:1.0.0" --format "{{.Names}}"', returnStdout: true).trim()
+                    def containerExists = sh(script: 'docker ps -a --filter "ancestor=bellalounaiheb/ihebbellalouna-5sae7-g3:1.0.0" --format "{{.Names}}"', returnStdout: true).trim()
 
                     if (containerExists) {
                         echo "Stopping and removing existing container: ${containerExists}"
