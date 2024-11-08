@@ -1,4 +1,9 @@
-FROM openjdk:17
-EXPOSE 8082
-ADD target/kaddem-0.0.1.jar /kaddem-0.0.1.jar
-ENTRYPOINT ["java", "-jar", "/kaddem-0.0.1.jar"]
+FROM openjdk:17-jdk-alpine
+
+WORKDIR /app
+
+RUN wget "http://192.168.33.10:8081/repository/maven-releases/tn/esprit/spring/kaddem/0.0.1/kaddem-0.0.1.jar" -O app.jar
+
+EXPOSE 8089
+
+ENTRYPOINT ["java", "-jar", "app.jar"]

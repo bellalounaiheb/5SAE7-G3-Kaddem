@@ -5,11 +5,6 @@ pipeline {
         maven 'M2_HOME'
     }
 
-    environment {
-        DOCKER_USERNAME = 'malekkh'
-        DOCKER_PASSWORD = 'dockerpass12345'
-    }
-
     stages {
         stage('GIT') {
             steps {
@@ -61,36 +56,46 @@ pipeline {
         stage('SonarQube') {
             steps {
                 echo 'Running SonarQube Analysis'
-                sh 'mvn sonar:sonar -Dsonar.login=admin -Dsonar.password=Sonarqube12345#'
+                sh 'mvn sonar:sonar -Dsonar.login=admin -Dsonar.password=Sonarqube12345# -Dmaven.test.skip=true'
             }
         }
 
         stage('Deploy to Nexus') {
             steps {
                 echo 'Deploying to Nexus Repository'
-                sh 'mvn clean deploy'
+                sh 'mvn deploy -Dmaven.test.skip=true'
             }
         }
 
-stage('Build Docker Image') {
-    steps {
-        script {
-            echo 'Building Docker Image'
-            def dockerImage = docker.build("malekkh/malekkhelil-5sae7-g3-kaddem:0.0.1")
-        }
-    }
-}
+   stage("Docker Build") {
+                      steps {
+                          echo "Building Docker image..."
+                          sh "docker build -t malekkh/malekkhelil-5sae7-g3 ."
+                          echo 'Docker image built successfully!'
+                      }
+                  }
 
-        stage('Deploy Image to DockerHub') {
-            steps {
-                script {
-                    echo 'Logging into DockerHub and Pushing Image'
-                    sh 'echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin'
-                    sh 'docker push malekkh/malekkhelil-5sae7-g3-kaddem:0.0.1'
-                }
-            }
-        }
+                  stage('Pushing to DockerHub') {
+                      steps {
+                          withCredentials([usernamePassword(credentialsId: 'dockerhub', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
+                              sh 'echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin'
+                              sh 'docker push malekkh/malekkhelil-5sae7-g3'
+                          }
+                      }
+                  }
 
+                  stage("Stoping containers"){
+                              steps{
+                                  sh "docker-compose down"
+                              }
+                          }
 
-    }
-}
+                     stage('Running containers') {
+                              steps {
+                                  echo 'Starting Docker containers...'
+                                  sh 'docker-compose up -d'
+                                  echo 'Containers started!'
+                              }
+                          }
+
+  }
