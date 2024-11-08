@@ -8,7 +8,7 @@ import tn.esprit.spring.kaddem.KaddemApplication;
 import tn.esprit.spring.kaddem.entities.Equipe;
 import tn.esprit.spring.kaddem.repositories.EquipeRepository;
 import tn.esprit.spring.kaddem.services.EquipeServiceImpl;
-import org.springframework.test.context.ActiveProfiles;
+
 
 import java.util.Arrays;
 import java.util.List;
@@ -19,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.*;
 
 @SpringBootTest(classes = KaddemApplication.class)
-@ActiveProfiles("test")
+
 class EquipeServiceImplTest {
 
     @Mock

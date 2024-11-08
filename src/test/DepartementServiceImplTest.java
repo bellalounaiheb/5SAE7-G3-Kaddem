@@ -8,7 +8,6 @@ import tn.esprit.spring.kaddem.KaddemApplication;
 import tn.esprit.spring.kaddem.entities.Departement;
 import tn.esprit.spring.kaddem.repositories.DepartementRepository;
 import tn.esprit.spring.kaddem.services.DepartementServiceImpl;
-import org.springframework.test.context.ActiveProfiles;
 
 import java.util.Arrays;
 import java.util.List;
@@ -17,8 +16,8 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.*;
+
 @SpringBootTest(classes = KaddemApplication.class)
-@ActiveProfiles("test")
 class DepartementServiceImplTest {
 
     @Mock
