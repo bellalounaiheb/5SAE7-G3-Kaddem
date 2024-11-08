@@ -1,7 +1,5 @@
 FROM openjdk:17-jdk-alpine
 
-
-
 WORKDIR /app
 
 RUN wget "http://192.168.33.10:8081/repository/maven-releases/tn/esprit/spring/kaddem/0.0.1/kaddem-0.0.1.jar" -O app.jar

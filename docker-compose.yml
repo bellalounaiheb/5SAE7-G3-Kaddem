@@ -30,7 +30,7 @@ services:
       - "3306:3306"
     environment:
       MYSQL_ROOT_PASSWORD: rootpassword
-      MYSQL_DATABASE: stationSki
+      MYSQL_DATABASE: kaddem
       MYSQL_USER: springuser
       MYSQL_PASSWORD: springpassword
     volumes:
