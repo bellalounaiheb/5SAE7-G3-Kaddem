@@ -85,13 +85,13 @@ stage('SonarQube') {
             }
         }
 
-        stage("Stopping containers") {
+        stage("Stopping the Containers") {
             steps {
                 sh "docker-compose down"
             }
         }
 
-        stage('Running containers') {
+        stage('Deploy with Docker Compose') {
             steps {
                 echo 'Starting Docker containers...'
                 sh 'docker-compose up -d'
