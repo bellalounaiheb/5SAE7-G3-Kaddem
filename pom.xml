@@ -69,13 +69,12 @@
                 <executions>
                     <execution>
                         <goals>
-                            <goal>repackage</goal> <!-- Repackages the application as an executable JAR -->
+                            <goal>repackage</goal>
                         </goals>
                     </execution>
                 </executions>
             </plugin>
 
-            <!-- Remove the maven-jar-plugin section, no longer necessary -->
         </plugins>
     </build>
 
