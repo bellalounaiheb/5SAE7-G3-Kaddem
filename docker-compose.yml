@@ -1,55 +1,41 @@
 version: '3.8'
+
 services:
-  app:
-    image: yasminerajhi/kaddem:latest  # Docker image for your application
+
+  springbootapp:
+    image: springbootapp:latest
+    build:
+      context: .
+      dockerfile: Dockerfile
     ports:
-      - "8082:8082"  # Map to your application’s port in Dockerfile
-    environment:
-      - JAVA_OPTS=-Xmx512m  # Customize memory settings as needed
+      - "8089:8089"
     depends_on:
-      - sonarqube
-      - nexus
-      - prometheus
-      - grafana
-
-  jenkins:
-    image: jenkins/jenkins
-    ports:
-      - "8080:8080"
-    volumes:
-      - jenkins_data:/var/jenkins_home
-
-  sonarqube:
-    image: sonarqube
-    ports:
-      - "9000:9000"
+      - mysqldb
     environment:
-      - SONAR_ES_BOOTSTRAP_CHECKS_DISABLE=true
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysqldb:3306/kaddem?createDatabaseIfNotExist=true
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: rootpassword
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+      SPRING_SERVLET_CONTEXT_PATH: /api
+      SERVER_PORT: 8089
+      SPRING_MVC_FORMAT_DATE: yyyy-MM-dd
+      SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT: org.hibernate.dialect.MySQL5InnoDBDialect
 
-  grafana:
-    image: grafana/grafana
-    ports:
-      - "3000:3000"
-    volumes:
-      - grafana_data:/var/lib/grafana
 
-  prometheus:
-    image: prom/prometheus
-    ports:
-      - "9090:9090"
-    volumes:
-      - prometheus_data:/prometheus
-    # You may need to add a configuration file for Prometheus to monitor your services
 
-  nexus:
-    image: sonatype/nexus3
+  mysqldb:
+    image: mysql:8.0
+    container_name: mysqldb
     ports:
-      - "8081:8081"
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: kaddem
+      MYSQL_USER: springuser
+      MYSQL_PASSWORD: springpassword
     volumes:
-      - nexus_data:/nexus-data
+      - dbdata:/var/lib/mysql
+
 
 volumes:
-  jenkins_data:
-  grafana_data:
-  prometheus_data:
-  nexus_data:
+  dbdata:

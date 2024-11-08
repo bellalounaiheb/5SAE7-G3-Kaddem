@@ -4,14 +4,12 @@ pipeline {
         jdk 'JAVA_HOME'
         maven 'M2_HOME'
     }
-    environment {
-        DOCKER_IMAGE = "yasminerajhi/yasminerajhi-5sae7-g3" // Docker image name
-    }
+
     stages {
         stage('GIT') {
             steps {
                 git branch: 'YasmineRAJHI-5SAE7-G3',
-                    url: 'https://github.com/bellalounaiheb/5SAE7-G3-Kaddem.git'
+                url: 'https://github.com/bellalounaiheb/5SAE7-G3-Kaddem.git'
             }
         }
 
@@ -52,27 +50,40 @@ pipeline {
             }
         }
 
-        stage('Build Docker Image') {
+         stage('Nexus') {
             steps {
-                sh 'docker build -t kaddem:latest .'
+                sh 'mvn deploy -Dmaven.test.skip=true'
+            }
+         }
+
+        stage("Docker Build") {
+            steps {
+                echo "Building Docker image..."
+                sh "docker build -t yasminerajhi/yasminerajhi_5sae7_g3 ."
+                echo 'Docker image built successfully!'
             }
         }
 
-        stage('Push Docker Image') {
+        stage('Pushing to DockerHub') {
             steps {
-                script {
-                    docker.withRegistry('https://registry.hub.docker.com', 'dockerhub-credentials-id') {
-                        docker.image("${DOCKER_IMAGE}:${env.BUILD_NUMBER}").push()
-                        // Optionally push a 'latest' tag for easy reference
-                        docker.image("${DOCKER_IMAGE}:${env.BUILD_NUMBER}").push('latest')
-                    }
+                withCredentials([usernamePassword(credentialsId: 'dockerhub-credentials-id', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
+                    sh 'echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin'
+                    sh 'docker push yasminerajhi/yasminerajhi_5sae7_g3'
                 }
             }
         }
 
-        stage('Nexus') {
+        stage("Stoping containers"){
+            steps{
+                sh "docker compose down"
+            }
+        }
+
+        stage('Running containers') {
             steps {
-                sh 'mvn deploy -Dmaven.test.skip=true'
+                echo 'Starting Docker containers...'
+                sh 'docker compose up -d'
+                echo 'Containers started!'
             }
         }
     }
