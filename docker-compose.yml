@@ -1,33 +1,41 @@
 version: '3.8'
 
 services:
-  app:
-    image: mouhebn/kaddem:latest
+
+  springbootapp:
+    image: springbootapp:latest
+    build:
+      context: .
+      dockerfile: Dockerfile
     ports:
       - "8089:8089"
     depends_on:
-      - db
+      - mysqldb
     environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/kaddem
-      SPRING_DATASOURCE_USERNAME: postgres
-      SPRING_DATASOURCE_PASSWORD: password
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysqldb:3306/kaddem?createDatabaseIfNotExist=true
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: rootpassword
       SPRING_JPA_HIBERNATE_DDL_AUTO: update
-      SPRING_JPA_SHOW_SQL: true
-      SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT: org.hibernate.dialect.PostgreSQLDialect
-    networks:
-      - app-network
+      SPRING_SERVLET_CONTEXT_PATH: /api
+      SERVER_PORT: 8089
+      SPRING_MVC_FORMAT_DATE: yyyy-MM-dd
+      SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT: org.hibernate.dialect.MySQL5InnoDBDialect
 
-  db:
-    image: postgres:13
-    environment:
-      POSTGRES_DB: kaddem
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: password
+
+
+  mysqldb:
+    image: mysql:8.0
+    container_name: mysqldb
     ports:
-      - "5432:5432"
-    networks:
-      - app-network
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: kaddem
+      MYSQL_USER: springuser
+      MYSQL_PASSWORD: springpassword
+    volumes:
+      - dbdata:/var/lib/mysql
 
-networks:
-  app-network:
-    driver: bridge
+
+volumes:
+  dbdata:
