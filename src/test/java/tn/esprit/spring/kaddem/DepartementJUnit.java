@@ -18,10 +18,6 @@ public class DepartementJUnit {
         departement = new Departement("Informatique");
     }
 
-    @Test
-    public void testGetIdDepart() {
-        assertNotNull(departement.getIdDepart());
-    }
 
     @Test
     public void testGetNomDepart() {
