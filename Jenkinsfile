@@ -67,35 +67,35 @@ pipeline {
             }
         }
 
-   stage("Docker Build") {
-                      steps {
-                          echo "Building Docker image..."
-                          sh "docker build -t malekkh/malekkhelil-5sae7-g3 ."
-                          echo 'Docker image built successfully!'
-                      }
-                  }
+        stage("Docker Build") {
+            steps {
+                echo "Building Docker image..."
+                sh "docker build -t malekkh/malekkhelil-5sae7-g3 ."
+                echo 'Docker image built successfully!'
+            }
+        }
 
-                  stage('Pushing to DockerHub') {
-                      steps {
-                          withCredentials([usernamePassword(credentialsId: 'dockerhub', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
-                              sh 'echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin'
-                              sh 'docker push malekkh/malekkhelil-5sae7-g3'
-                          }
-                      }
-                  }
+        stage('Pushing to DockerHub') {
+            steps {
+                withCredentials([usernamePassword(credentialsId: 'dockerhub', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
+                    sh 'echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin'
+                    sh 'docker push malekkh/malekkhelil-5sae7-g3'
+                }
+            }
+        }
 
-                  stage("Stoping containers"){
-                              steps{
-                                  sh "docker-compose down"
-                              }
-                          }
+        stage("Stopping containers") {
+            steps {
+                sh "docker-compose down"
+            }
+        }
 
-                     stage('Running containers') {
-                              steps {
-                                  echo 'Starting Docker containers...'
-                                  sh 'docker-compose up -d'
-                                  echo 'Containers started!'
-                              }
-                          }
-
-  }
+        stage('Running containers') {
+            steps {
+                echo 'Starting Docker containers...'
+                sh 'docker-compose up -d'
+                echo 'Containers started!'
+            }
+        }
+    }
+}
