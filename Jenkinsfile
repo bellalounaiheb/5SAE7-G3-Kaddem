@@ -84,18 +84,21 @@ pipeline {
 
 
         stage('Deploy with Docker Compose') {
-                steps {
-                    script {
-                        def containerExists = sh(script: 'docker ps -a --filter "ancestor=bellalounaiheb/IhebBELLALOUNA-5SAE7-G3:1.0.0" --format "{{.Names}}"', returnStdout: true).trim()
+            steps {
+                script {
+                    def backExists = sh(script: 'docker ps -a --filter "name=back" --format "{{.Names}}"', returnStdout: true).trim()
+                    def dbExists = sh(script: 'docker ps -a --filter "name=mysqldb" --format "{{.Names}}"', returnStdout: true).trim()
 
-                        if (containerExists) {
-                            echo "Stopping and removing existing container: ${containerExists}"
-                            sh "docker stop ${containerExists} || true"
-                            sh "docker rm ${containerExists} || true"
-                        }
-
-                        sh 'docker compose up -d'
+                    if (backExists) {
+                        sh 'docker stop back || true'
+                        sh 'docker rm back || true'
                     }
+                    if (dbExists) {
+                        sh 'docker stop mysqldb || true'
+                        sh 'docker rm mysqldb || true'
+                    }
+
+                    sh 'docker compose up -d'
                 }
             }
         }
