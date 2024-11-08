@@ -13,13 +13,11 @@ pipeline {
             }
         }
 
-
         stage('Compile Stage') {
             steps {
                 sh 'mvn clean compile'
             }
         }
-
 
         stage('Unit Test') {
             steps {
@@ -27,13 +25,11 @@ pipeline {
             }
         }
 
-
         stage('SonarQube') {
             steps {
                 sh 'mvn sonar:sonar -Dsonar.login=admin -Dsonar.password=Admin123456- -Dmaven.test.skip=true'
             }
         }
-
 
         stage('Nexus Deployment') {
             steps {
@@ -52,7 +48,6 @@ pipeline {
             }
         }
 
-
         stage('Build Docker Image') {
             steps {
                 script {
@@ -60,7 +55,6 @@ pipeline {
                 }
             }
         }
-
 
         stage('Push to Docker Hub') {
             steps {
@@ -82,20 +76,15 @@ pipeline {
             }
         }
 
-
         stage('Deploy with Docker Compose') {
             steps {
                 script {
-                    def backExists = sh(script: 'docker ps -a --filter "name=back" --format "{{.Names}}"', returnStdout: true).trim()
-                    def dbExists = sh(script: 'docker ps -a --filter "name=mysqldb" --format "{{.Names}}"', returnStdout: true).trim()
+                    def containerExists = sh(script: 'docker ps -a --filter "ancestor=bellalounaiheb/IhebBELLALOUNA-5SAE7-G3:1.0.0" --format "{{.Names}}"', returnStdout: true).trim()
 
-                    if (backExists) {
-                        sh 'docker stop back || true'
-                        sh 'docker rm back || true'
-                    }
-                    if (dbExists) {
-                        sh 'docker stop mysqldb || true'
-                        sh 'docker rm mysqldb || true'
+                    if (containerExists) {
+                        echo "Stopping and removing existing container: ${containerExists}"
+                        sh "docker stop ${containerExists} || true"
+                        sh "docker rm ${containerExists} || true"
                     }
 
                     sh 'docker compose up -d'
