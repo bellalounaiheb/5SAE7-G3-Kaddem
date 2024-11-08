@@ -1,5 +1,5 @@
 pipeline {
-    agent slave01
+    agent any
     tools {
         jdk 'JAVA_HOME'
         maven 'M2_HOME'
