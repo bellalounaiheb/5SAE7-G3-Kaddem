@@ -51,7 +51,7 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 script {
-                    sh 'docker build -t bellalounaiheb/IhebBELLALOUNA-5SAE7-G3:1.0.0 .'
+                    sh 'docker build -t bellalounaiheb/ihebbellalouna-5sae7-g3:1.0.0 .'
                 }
             }
         }
@@ -67,7 +67,7 @@ pipeline {
                     if (imageExists != '200') {
                         withCredentials([usernamePassword(credentialsId: 'docker-hub-credentials', passwordVariable: 'DOCKER_PASSWORD', usernameVariable: 'DOCKER_USERNAME')]) {
                             sh 'echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin'
-                            sh 'docker push bellalounaiheb/IhebBELLALOUNA-5SAE7-G3'
+                            sh 'docker push bellalounaiheb/ihebbellalouna-5sae7-g3'
                         }
                     } else {
                         echo 'Docker image already exists on Docker Hub; skipping push.'
