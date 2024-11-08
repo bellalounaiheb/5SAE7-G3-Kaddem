@@ -26,19 +26,6 @@ pipeline {
             }
         }
 
-        stage('Code Coverage Report') {
-            steps {
-                publishHTML(target: [
-                    reportName: 'JaCoCo Coverage Report',
-                    reportDir: 'target/site/jacoco',
-                    reportFiles: 'index.html',
-                    keepAll: true,
-                    alwaysLinkToLastBuild: true,
-                    allowMissing: false
-                ])
-            }
-        }
-
         stage('SonarQube') {
             steps {
                 sh 'mvn sonar:sonar -Dsonar.login=admin -Dsonar.password=Admin123456- -Dmaven.test.skip=true'
