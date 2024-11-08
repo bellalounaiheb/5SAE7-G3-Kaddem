@@ -13,7 +13,6 @@ import tn.esprit.spring.kaddem.repositories.ContratRepository;
 import tn.esprit.spring.kaddem.repositories.DepartementRepository;
 import tn.esprit.spring.kaddem.repositories.EquipeRepository;
 import tn.esprit.spring.kaddem.repositories.EtudiantRepository;
-import tn.esprit.spring.kaddem.services.EtudiantServiceImpl;
 
 import java.util.Arrays;
 import java.util.HashSet;

@@ -7,7 +7,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import tn.esprit.spring.kaddem.KaddemApplication;
 import tn.esprit.spring.kaddem.entities.Equipe;
 import tn.esprit.spring.kaddem.repositories.EquipeRepository;
-import tn.esprit.spring.kaddem.services.EquipeServiceImpl;
 
 import java.util.Arrays;
 import java.util.List;
