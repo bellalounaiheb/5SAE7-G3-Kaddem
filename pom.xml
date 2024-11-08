@@ -62,21 +62,20 @@
 
     <build>
         <plugins>
+            <!-- Spring Boot Maven Plugin to create an executable JAR -->
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-jar-plugin</artifactId>
-                <version>3.1.0</version>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
                 <executions>
                     <execution>
                         <goals>
-                            <goal>jar</goal>
+                            <goal>repackage</goal> <!-- Repackages the application as an executable JAR -->
                         </goals>
-                        <configuration>
-                            <classifier>repackaged</classifier>  <!-- Use classifier to avoid artifact replacement -->
-                        </configuration>
                     </execution>
                 </executions>
             </plugin>
+
+            <!-- Remove the maven-jar-plugin section, no longer necessary -->
         </plugins>
     </build>
 
