@@ -4,6 +4,9 @@ pipeline {
         jdk 'JAVA_HOME'
         maven 'M2_HOME'
     }
+    environment {
+            GIT_HOME = 'C:\\Program Files\\Git\\bin\\git.exe'  // Modify this path if needed
+        }
     stages {
 
         stage('GIT') {
